@@ -1,17 +1,15 @@
-import { engine } from '@dcl/sdk/ecs'
-
-import { bounceScalingSystem, circularSystem } from './systems'
-
+import { MeshRenderer, Transform, engine } from '@dcl/sdk/ecs'
 import { setupUi } from './ui'
-import { createCube } from './factory'
-
-// Defining behavior. See `src/systems.ts` file.
-engine.addSystem(circularSystem)
-engine.addSystem(bounceScalingSystem)
+import { Vector3 } from '@dcl/sdk/math'
 
 export function main() {
   // draw UI
-  setupUi()
 
-  createCube(8, 1, 8)
+  const Cube = engine.addEntity()
+  MeshRenderer.setBox(Cube)
+  Transform.create(Cube, {
+    position: Vector3.create(8, 1, 8)
+  })
+
+  setupUi(Cube)
 }
