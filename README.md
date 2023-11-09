@@ -31,6 +31,9 @@ export function main() {
 
 Make sure you delete the folder before pushing to production! Will add flags to prevent this automatically in the future.
 
+## How does this work?
+This is just a simple UI overlay that takes advantage of SDK7's [Data Mutability](https://docs.decentraland.org/creator/development-guide/sdk7/mutable-data/). You can grab mutable data from any entity, meaning that you can adjust it and the changes will reflect in world. This tool uses mutability to make adjustments to position, rotation, scale, for you to preview adjustments to plug the values into your code.
+
 
 ## Credits
 
