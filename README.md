@@ -1,6 +1,3 @@
-
-
-
 # DCL SDK7 Mover Debug Tool
 
 This is a small tool to help position things in-world so that you can type the same coordinates with code.
@@ -11,9 +8,11 @@ https://github.com/innkeeper-eth/dcl-sdk7-move-debug/assets/28109194/e105ac5d-52
 
 https://github.com/innkeeper-eth/dcl-sdk7-move-debug/assets/28109194/03d6c407-a5c8-4132-8b66-6c08f90f7016
 
-
-
 ## Getting Started
 
 This project was created with DCL SDK7 using the CLI to init a new project
 `npx @dcl/sdk-commands init`
+
+## Credits
+
+Made by [grins](https://twitter.com/deandotland) for [innkeeper.eth](https://twitter.com/innkeeperdoteth)
