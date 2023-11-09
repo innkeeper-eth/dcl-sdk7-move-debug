@@ -1,15 +1,17 @@
-import { engine, Entity, Transform } from '@dcl/sdk/ecs'
+import { Entity, Transform } from '@dcl/sdk/ecs'
 import { Color4, Quaternion } from '@dcl/sdk/math'
 import ReactEcs, { Button, Label, ReactEcsRenderer, UiEntity } from '@dcl/sdk/react-ecs'
 
 type State = {
   stat: 'position' | 'rotation' | 'scale'
-  scale: 1 | 0.1 | 0.01 | 0.001 | 0.0001
+  scale: number
 }
 const state: State = {
   stat: 'position',
   scale: 0.1
 }
+
+const scaleSizes = [10, 1, 0.1, 0.01]
 
 const VStack = {
   width: 'auto',
@@ -23,6 +25,7 @@ const HStack = {
 } as const
 
 export function setupUi(entity: Entity) {
+  console.log('ReactEcs initiated:', !!ReactEcs)
   ReactEcsRenderer.setUiRenderer(() => uiComponent(entity))
 }
 
@@ -49,11 +52,22 @@ const uiComponent = (entity: Entity) => (
       <Label value={`${getEntityStats(entity, state.stat)}`} fontSize={18} uiTransform={{ width: '100%' }} />
     </UiEntity>
     <UiEntity uiTransform={{ ...VStack, justifyContent: 'center', height: '100%', width: '100%' }}>
-      <Button
-        value={state.scale.toString()}
+      <UiEntity uiTransform={HStack}>
+        {scaleSizes.map((num) => (
+          <Button
+            value={num.toString()}
+            fontSize={10}
+            uiTransform={{ width: 'auto', margin: '10px 2px', padding: '5px' }}
+            onMouseDown={() => {
+              state.scale = num
+            }}
+          />
+        ))}
+      </UiEntity>
+      <Label
+        value={'Scale: ' + state.scale.toString()}
         fontSize={18}
-        uiTransform={{ width: '75%', margin: '10px 0' }}
-        onMouseDown={toggleScale}
+        uiTransform={{ width: '75%', height: '40px', margin: '10px 0' }}
       />
       <UiEntity uiTransform={HStack}>
         <MutableButton entity={entity} coord="x" isPlus={true} />
@@ -76,19 +90,16 @@ function getEntityStats(entity: Entity, stat: 'scale' | 'rotation' | 'position' 
   if (!entityPosition) return ' no data yet'
   if (stat === 'rotation') {
     const { x, y, z } = Quaternion.toEulerAngles(entityPosition.rotation)
-    return `X: ${x.toFixed(3)} 
-Y:${y.toFixed(3)} 
-Z:${z.toFixed(3)} `
+    return parseEulerToString({ x, y, z })
   }
   const { x, y, z } = entityPosition[stat]
-  return `X: ${x.toFixed(3)} 
-Y:${y.toFixed(3)} 
-Z:${z.toFixed(3)} `
+  return parseCoordsToString({ x, y, z })
 }
 
+type Coord = 'x' | 'y' | 'z'
 type MutButton = {
   entity: Entity
-  coord: 'x' | 'y' | 'z'
+  coord: Coord
   isPlus: boolean
 }
 const MutableButton = ({ entity, coord, isPlus }: MutButton) => {
@@ -103,8 +114,13 @@ const MutableButton = ({ entity, coord, isPlus }: MutButton) => {
         if (!entityPosition) return ' no data yet'
         const adjustment = state.scale * (isPlus ? 1 : -1)
         if (state.stat === 'rotation') {
-          const rotTweak = Quaternion.toEulerAngles(entityPosition.rotation)[coord] + adjustment
-          entityPosition.rotation[coord] = rotTweak
+          const eulerRotations = Quaternion.toEulerAngles(entityPosition.rotation)
+          const nudge = (c: Coord) => (c === coord ? adjustment : 0)
+          entityPosition.rotation = Quaternion.fromEulerDegrees(
+            eulerRotations.x + nudge('x'),
+            eulerRotations.y + nudge('y'),
+            eulerRotations.z + nudge('z')
+          )
           return
         }
         entityPosition[state.stat][coord] = entityPosition[state.stat][coord] + adjustment
@@ -127,19 +143,16 @@ function toggleState() {
   }
 }
 
-function toggleScale() {
-  switch (state.scale) {
-    case 1:
-      state.scale = 0.1
-      break
-    case 0.1:
-      state.scale = 0.01
-      break
-    case 0.01:
-      state.scale = 0.001
-      break
-    case 0.001:
-      state.scale = 1
-      break
-  }
+function parseCoordsToString(props: { x: number; y: number; z: number }) {
+  const { x, y, z } = props
+  return `X: ${x.toFixed(3)} 
+Y:${y.toFixed(3)} 
+Z:${z.toFixed(3)} `
+}
+
+function parseEulerToString(props: { x: number; y: number; z: number }) {
+  const { x, y, z } = props
+  return `Quaternion
+.toEulerAngles
+(${x.toFixed(3)}, ${y.toFixed(3)}, ${z.toFixed(3)})`
 }
