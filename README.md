@@ -13,6 +13,25 @@ https://github.com/innkeeper-eth/dcl-sdk7-move-debug/assets/28109194/03d6c407-a5
 This project was created with DCL SDK7 using the CLI to init a new project
 `npx @dcl/sdk-commands init`
 
+In your SDK7 project, copy/paste the `debugModal` folder into your project.
+
+Then wrap the entity you wish to manipulate. Use the numbers on screen to manually adjust your code.
+```
+import { debugModal } from './debugModal'
+
+export function main() {
+  const Cube = engine.addEntity()
+  MeshRenderer.setBox(Cube)
+  Transform.create(Cube, {
+    position: Vector3.create(8, 1, 8)
+  })
+  debugModal(Cube)
+}
+```
+
+Make sure you delete the folder before pushing to production! Will add flags to prevent this automatically in the future.
+
+
 ## Credits
 
 Made by [grins](https://twitter.com/deandotland) for [innkeeper.eth](https://twitter.com/innkeeperdoteth)
