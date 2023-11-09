@@ -3,7 +3,7 @@ import { Color4 } from '@dcl/sdk/math'
 import ReactEcs, { Button, Label, ReactEcsRenderer, UiEntity } from '@dcl/sdk/react-ecs'
 import { HStack, VStack } from './Transforms'
 import { state } from './state'
-import { getEntityStats } from './helpers'
+import { getEntityStats, toggleState } from './helpers'
 import { MutableButton } from './CoordButton'
 
 const scaleSizes = [10, 1, 0.1, 0.01]
